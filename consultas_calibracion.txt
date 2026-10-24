@@ -1,0 +1,18 @@
+# Consultas para calibrar el umbral de similitud (RAG_UMBRAL_SIMILITUD).
+# Una por línea. Las líneas que empiezan con # se ignoran.
+#   +  consulta DEL TEMA: tu base de datos SÍ tiene información sobre esto
+#   -  consulta FUERA DE TEMA: tu base NO tiene nada parecido
+#
+# Escribilas como las escribiría un alumno (con saludos, errores, etc.), no copiadas de la base.
+
++ hola bot, cómo estás? para qué sirve el patrón state? gracias!
++ ¿Los estados del patrón State pueden tener atributos propios?
++ ¿Las relaciones de dependencia entre los estados son obligatorias?
++ ¿Cómo se aplica el patrón State a la persona y sus gastos?
++ ¿Cómo me abstraigo de los botones de la interfaz en el diagrama de clases?
+# agregá acá más consultas del tema que sepas que están en tu base
+
+- hola, tengo una duda? como esta el clima en buenos aires?
+- ¿Cuál es la receta de las milanesas?
+- a quién le gusta lady Gagaaaaaa? 
+- ¿Cómo instalo Windows 11 en una notebook vieja?

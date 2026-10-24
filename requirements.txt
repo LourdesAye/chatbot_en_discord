@@ -1,0 +1,34 @@
+# =========================
+# Runtime recomendado
+# Python 3.11.x
+# =========================
+
+# Discord y configuración
+discord.py==2.5.2
+python-dotenv==1.1.0
+
+# LangChain y ChromaDB
+langchain==0.3.26
+langchain-chroma==0.2.6
+langchain-huggingface==0.3.0
+
+# Embeddings
+sentence-transformers==4.1.0
+
+# PostgreSQL
+psycopg2-binary==2.9.10
+
+# Dataframes y fechas
+pandas==3.0.3
+python-dateutil==2.9.0.post0
+
+# HTTP
+requests==2.32.3
+
+# Alembic para migraciones de base de datos
+sqlalchemy==2.0.50
+alembic==1.19.2
+
+#PyYAML para leer archivos YAML
+PyYAML==6.0.3
+rapidfuzz==3.14.6

@@ -1,0 +1,24 @@
+# entorno
+.env
+.env.*
+venv/
+
+# --- Datos reales / generados ---
+json/
+logs/
+logs_demo/
+chroma/
+chroma_demo/
+csv_*/
+log_discord_*
+*.log
+estructura.txt
+backups/
+
+# --- Python / entorno ---
+__pycache__/
+*.pyc
+venv/
+.venv/
+.ropeproject/
+.vscode/

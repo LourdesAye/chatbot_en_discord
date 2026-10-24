@@ -1,0 +1,12 @@
+# Forzar saltos de línea LF en los archivos de texto
+*.py     text eol=lf
+*.json   text eol=lf
+*.csv    text eol=lf
+*.md     text eol=lf
+*.txt    text eol=lf
+
+# Evitar conversiones innecesarias
+*.jpg    binary
+*.png    binary
+*.pdf    binary
+*.zip    binary
