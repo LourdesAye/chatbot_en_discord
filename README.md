@@ -31,7 +31,7 @@ modelo local (Ollama), verificando que cada oración esté apoyada en lo que dij
 
 ```bash
 git clone https://github.com/LourdesAye/chatbot_en_discord.git
-cd <nombre-del-repo>
+cd chatbot_en_discord
 
 python -m venv venv
 # Windows (PowerShell): .\venv\Scripts\Activate.ps1
