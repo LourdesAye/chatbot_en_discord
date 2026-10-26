@@ -3,7 +3,7 @@
 .env.*
 venv/
 
-# --- Datos reales / generados ---
+# Datos reales / generados
 json/
 logs/
 logs_demo/
@@ -14,8 +14,9 @@ log_discord_*
 *.log
 estructura.txt
 backups/
+config/
 
-# --- Python / entorno ---
+# Python / entorno
 __pycache__/
 *.pyc
 venv/
