@@ -50,8 +50,8 @@ La idea es que el conocimiento que ya aportaron los docentes quede almacenado y 
    (esquema gestionado con Alembic).
 3. **Embeddings**: cada pregunta se indexa en ChromaDB, es decir, se convierte en un vector
    numérico que representa su significado, para poder buscar por similitud de sentido y no
-   solo por palabras exactas. El modelo de embeddings es `BAAI/bge-m3` por defecto y se puede
-   cambiar con la variable `EMBEDDINGS_MODELO` del `.env`.
+   solo por palabras exactas. El modelo de embeddings recomendado es `BAAI/bge-m3` (el que figura en `env.example`) y se puede cambiar con la variable `EMBEDDINGS_MODELO` del `.env`. Si no se define, el código usa `paraphrase-multilingual-MiniLM-L12-v2`, más liviano.
+
 4. **RAG**: ante una consulta nueva se buscan las preguntas más parecidas, se arma un contexto
    con las respuestas de docentes y un modelo local de Ollama redacta la respuesta. El código
    descarta las oraciones que no estén respaldadas por los fragmentos recuperados.
@@ -63,7 +63,7 @@ La idea es que el conocimiento que ya aportaron los docentes quede almacenado y 
 - Python 3.11
 - PostgreSQL
 - [Ollama](https://ollama.com) con un modelo descargado (se probó con `qwen2.5:7b`:
-  `ollama pull qwen2.5:7b`). Es opcional: con `RAG_HABILITADO=false` no se usa.
+  `ollama pull qwen2.5:7b`). Es el valor de `OLLAMA_MODEL` en `env.example`; si no se define, el código usa `qwen2.5:3b`. Es opcional: con `RAG_HABILITADO=false` no se usa.
 - Un bot de Discord con el intent privilegiado **Message Content** activado, y permisos para
   enviar mensajes, crear hilos públicos, enviar mensajes en hilos y administrar hilos.
 
@@ -84,13 +84,13 @@ Copiar `env.example` a `.env` y completar, como mínimo, los datos de PostgreSQL
 (`DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`). Para usar el bot de Discord
 completa también `DISCORD_TOKEN` y los canales.
 
-La primera ejecución descarga el modelo de embeddings (`BAAI/bge-m3`, un modelo pesado), por
+Con la configuración de `env.example`, la primera ejecución descarga el modelo de embeddings (`BAAI/bge-m3`, un modelo pesado), por
 lo que necesita conexión a internet y espacio en disco.
 
 ## Contexto y datos
 
 Proyecto desarrollado inicialmente en el marco de una Práctica Profesional Supervisada en la
-UTN FRBA (materia Diseño de Sistemas), con tutoría de docentes. Se desarrolló y evaluó con
+UTN FRBA (materia Diseño de Sistemas), con tutoría de docentes. Se desarrolló y probó con
 conversaciones reales de un curso, que se manejaron únicamente en un entorno local.
 **Por privacidad, este repositorio no incluye esos datos**: se reemplazaron por datos
 inventados.
