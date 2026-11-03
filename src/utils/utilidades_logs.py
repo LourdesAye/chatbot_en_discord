@@ -20,30 +20,15 @@ def preparar_ruta(base_dir, nombre_archivo):
     return os.path.join(base_dir, nombre_archivo)
 
 def setup_logger(nombre_logger, nombre_archivo):
-    ruta_log = preparar_ruta(LOG_DIR_FINAL,nombre_archivo)
-    logger = logging.getLogger(nombre_logger)  # Cada proceso tiene su propio logger
-    
-    if not logger.handlers:  # Para evitar handlers duplicados
+    logger = logging.getLogger(nombre_logger)
+    if not logger.handlers:  # evita handlers duplicados
+        ruta_log = preparar_ruta(LOG_DIR_FINAL, nombre_archivo)
         logger.setLevel(logging.DEBUG)
-
-        file_handler = logging.FileHandler(ruta_log, mode='a', encoding='utf-8') # Creación de FileHandler
-        
-        # Forzar a que haga flush de manera automática después de cada mensaje (.emit)
-        # Pisar el método emit original para asegurar de que siempre se limpie el búfer
-        # esto evita que si una operación es muy rápida de manera que se cierra la ejecución, 
-        # python no pierde el buffer de mensajes logs que aun no llegaron a escribirse
-        original_emit = file_handler.emit
-        def auto_flush_emit(record):
-            original_emit(record)
-            file_handler.flush()
-        file_handler.emit = auto_flush_emit
-        
-    
-        file_handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(formatter)
+        file_handler = logging.FileHandler(ruta_log, mode='a', encoding='utf-8')
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(name)s - %(message)s'))
         logger.addHandler(file_handler)
-        logger.propagate = False # evitar que se muestre por consola  
+        logger.propagate = False
     return logger
 
 def guardar_pregunta_y_respuestas_en_log(pregunta, numero_pregunta, nombre_archivo):
