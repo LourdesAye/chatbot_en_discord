@@ -6,7 +6,7 @@ from utils.utilidades_logs import setup_logger
 
 
 def obtener_preguntas_y_metadatos():
-    logger_preguntas = setup_logger("logger_embeddings", "logs_preguntas_para_embeddings.txt")
+    logger_preguntas = setup_logger("logger_extraer_preguntas", "logs_preguntas_para_embeddings.txt")
     preguntas, metadatos = [], []
 
     try:
