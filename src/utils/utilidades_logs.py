@@ -23,14 +23,25 @@ def preparar_ruta(base_dir: Path, nombre_archivo: str) -> Path:
 
 def setup_logger(nombre_logger, nombre_archivo):
     logger = logging.getLogger(nombre_logger)
-    if not logger.handlers:  # evita handlers duplicados
-        ruta_log = preparar_ruta(LOG_DIR_FINAL, nombre_archivo)
-        logger.setLevel(logging.DEBUG)
-        file_handler = logging.FileHandler(ruta_log, mode='a', encoding='utf-8')
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(name)s - %(message)s'))
-        logger.addHandler(file_handler)
-        logger.propagate = False
+    ruta_log = (Path(LOG_DIR_FINAL) / nombre_archivo).resolve()
+
+    if logger.handlers:
+        # el logger ya existe: comprobar que escribe en el mismo archivo
+        for h in logger.handlers:
+            if isinstance(h, logging.FileHandler) and Path(h.baseFilename) != ruta_log:
+                raise ValueError(
+                    f"El logger '{nombre_logger}' ya escribe en '{Path(h.baseFilename).name}' "
+                    f"y se pidió '{nombre_archivo}'. Usá otro nombre de logger."
+                )
+        return logger
+
+    preparar_ruta(LOG_DIR_FINAL, nombre_archivo)   # crea la carpeta si falta
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(ruta_log, mode='a', encoding='utf-8')
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(name)s - %(message)s'))
+    logger.addHandler(file_handler)
+    logger.propagate = False
     return logger
 
 def guardar_pregunta_y_respuestas_en_log(pregunta, numero_pregunta, nombre_archivo):
