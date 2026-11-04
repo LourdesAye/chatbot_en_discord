@@ -1,5 +1,5 @@
 import logging
-import os
+
 from datetime import datetime
 
 import pandas as pd
@@ -12,12 +12,14 @@ from utils.config_paths import LOG_DIR_ABS
 FECHA_LOG = datetime.now().strftime("logs_%d_%m_%y_%H_%M")
 FECHA_CSV = datetime.now().strftime("csv_%d_%m_%y_%H_%M")
 
-LOG_DIR_FINAL = os.path.join(LOG_DIR_ABS, FECHA_LOG)
-CSV_DIR_FINAL = os.path.join(LOG_DIR_ABS, FECHA_CSV)
+from pathlib import Path
 
-def preparar_ruta(base_dir, nombre_archivo):
-    os.makedirs(base_dir, exist_ok=True)
-    return os.path.join(base_dir, nombre_archivo)
+LOG_DIR_FINAL = LOG_DIR_ABS / FECHA_LOG
+CSV_DIR_FINAL = LOG_DIR_ABS / FECHA_CSV
+
+def preparar_ruta(base_dir: Path, nombre_archivo: str) -> Path:
+    base_dir.mkdir(parents=True, exist_ok=True)
+    return base_dir / nombre_archivo
 
 def setup_logger(nombre_logger, nombre_archivo):
     logger = logging.getLogger(nombre_logger)
