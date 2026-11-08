@@ -1,14 +1,11 @@
 import os
 
-from dotenv import load_dotenv
+from utils import config_paths # noqa: F401  # Inicializa las variables de entorno (.env)
 
 from utils.utilidades_logs import setup_logger
 
 # Inicializar logger para esta parte del sistema
 logger_db= setup_logger('carga_db','log_persistencia_de_datos.txt')
-
-# Cargar variables desde .env
-load_dotenv()
 
 # Obtener configuración desde variables de entorno (.env)
 CONFIG = {

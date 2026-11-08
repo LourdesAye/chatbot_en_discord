@@ -7,6 +7,7 @@ from sqlalchemy.exc import (
     ProgrammingError,
     SQLAlchemyError,
 )
+from utils.config_paths import ALEMBIC_INI
 
 from utils.utilidades_logs import setup_logger
 
@@ -14,7 +15,7 @@ logger_migraciones_alembic = setup_logger('migraciones_alembic', 'log_migracione
 
 def aplicar_migraciones_automaticas():
     try:
-        alembic_cfg = Config("alembic.ini")
+        alembic_cfg = Config(str(ALEMBIC_INI))
         command.upgrade(alembic_cfg, "head")
         logger_migraciones_alembic.debug(" ✅ Migraciones aplicadas con éxito.")
 

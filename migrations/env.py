@@ -3,16 +3,13 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from dotenv import load_dotenv
+from utils import config_paths # no qa:F401 # Inicializa las variables del entorno (.env)
 from sqlalchemy import engine_from_config, pool
 
 from utils.utilidades_logs import setup_logger
 
 # Configurar logger específico para migraciones
 logger_migraciones_alembic = setup_logger('migraciones_alembic', 'log_migraciones_alembic_automaticas.txt')
-
-# Carga las variables del archivo .env
-load_dotenv()
 
 # Construir la URL de conexión usando las variables de entorno
 db_user = os.getenv("DB_USER")
