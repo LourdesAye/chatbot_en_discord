@@ -28,6 +28,8 @@ import numpy as np
 from embeddings.extraer_preguntas import obtener_preguntas_y_metadatos
 from embeddings.modelo_embeddings import crear_modelo_embeddings, nombre_modelo_embeddings
 
+from utils.config_paths import RAIZ_PROYECTO
+
 # Consultas de respaldo: solo se usan si no existe consultas_calibracion.txt (o no tiene líneas + / -)
 CONSULTAS_DEL_TEMA = [
     "hola bot, cómo andas? para qué sirve el patrón state? gracias!",
@@ -38,12 +40,11 @@ CONSULTAS_FUERA_DE_TEMA = [
     "¿Cuál es la receta de las milanesas?",
 ]
 
-ARCHIVO_CONSULTAS = "consultas_calibracion.txt"
-
+ARCHIVO_CONSULTAS = RAIZ_PROYECTO / "consultas_calibracion.txt"
 
 def cargar_consultas():
     """Lee el archivo de consultas y devuelve dos listas: (del tema, fuera de tema)."""
-    if not os.path.exists(ARCHIVO_CONSULTAS):
+    if not ARCHIVO_CONSULTAS.exists():
         return CONSULTAS_DEL_TEMA, CONSULTAS_FUERA_DE_TEMA
 
     tema, fuera = [], []                       # dos listas vacías donde se van juntando las consultas

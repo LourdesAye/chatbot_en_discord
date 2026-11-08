@@ -1,7 +1,8 @@
 """Creación centralizada del modelo de embeddings (se elige con EMBEDDINGS_MODELO en el .env)."""
 import os
 
-from dotenv import load_dotenv
+from utils import config_paths # noqa: F401  # Inicializa las variables de entorno (.env)
+
 from langchain_huggingface import HuggingFaceEmbeddings
 
 # Modelo multilingüe liviano (entiende español); reemplaza a all-MiniLM-L6-v2, pensado para inglés.
@@ -9,7 +10,6 @@ MODELO_EMBEDDINGS_POR_DEFECTO = "paraphrase-multilingual-MiniLM-L12-v2"
 
 
 def nombre_modelo_embeddings() -> str:
-    load_dotenv()
     return (os.getenv("EMBEDDINGS_MODELO") or MODELO_EMBEDDINGS_POR_DEFECTO).strip()
 
 

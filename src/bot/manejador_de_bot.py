@@ -5,7 +5,6 @@ from datetime import datetime
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 from psycopg2 import connect
 from psycopg2.extras import DictCursor
 
@@ -61,7 +60,6 @@ class DiscordChatbot:
     def __init__(self, validador: Validador):
 
         self.validador = validador
-        load_dotenv()
 
         self.token = os.getenv('DISCORD_TOKEN')
         self.nombre_canal_del_chatbot = os.getenv('NOMBRE_CANAL_CHATBOT')
@@ -73,7 +71,7 @@ class DiscordChatbot:
         self.ids_canales_de_consultas = _lista_desde_env(os.getenv("ID_CANALES_DE_CONSULTAS_ALUMNOS"), int)
 
         fecha_discord_log = datetime.now().strftime("log_discord_%d_%m_%y_%H_%M")
-        archivo_log_discord = os.path.join(LOG_DIR_ABS, fecha_discord_log)
+        archivo_log_discord = LOG_DIR_ABS / fecha_discord_log
         self.discord_handler = logging.FileHandler(filename=archivo_log_discord, encoding='utf-8', mode='w')
 
         self.logger_chatbot_discord = setup_logger('chatbot_con_discord', 'log_chatbot_integracion_discord.txt')
