@@ -144,6 +144,59 @@ python src/main_bot.py       # inicia el bot de Discord
 Para probar la generación con Ollama, poner en el `.env` `RAG_HABILITADO=true` y dejar el bot
 corriendo.
 
+## Configuración de rutas y logs
+
+Todo se configura desde el `.env` (hay un ejemplo comentado en `env.example`).
+
+### Rutas
+
+`LOG_DIR`, `JSON_DIR`, `CHROMA_DIR` y `CONFIG_DIR` pueden ser:
+
+- **Relativas:** se cuentan desde la raíz del proyecto (por ejemplo `logs`), sin importar desde qué carpeta se ejecute el programa.
+- **Absolutas:** se usan tal cual (por ejemplo `D:/datos/chroma`). Sirve para dejar datos privados fuera del repositorio.
+
+La raíz del proyecto se detecta automáticamente: es la carpeta que contiene `alembic.ini`. Si una variable no está definida, se usan `logs`, `json`, `chroma` y `config`.
+
+`logs/` se crea sola. `json/` y `config/` son datos de entrada y deben existir. `chroma/` la crea ChromaDB al guardar los vectores.
+
+### Logs
+
+El nivel indica qué se escribe como mínimo: `DEBUG` < `INFO` < `WARNING` < `ERROR` < `CRITICAL`.
+
+| Variable | Qué hace |
+|---|---|
+| `LOG_LEVEL` | Nivel de todos los logs. Si no se define, se usa `INFO`. |
+| `LOG_LEVEL_<LOGGER>` | Nivel de un solo logger. Tiene prioridad sobre `LOG_LEVEL`. |
+
+| Logger (`<LOGGER>`) | Archivo en `logs/` | Qué registra |
+|---|---|---|
+| `CARGA_DB` | `log_persistencia_de_datos.txt` | Guardado de datos en PostgreSQL |
+| `CARGA_PROCESADOR` | `log_procesamiento_con_preguntas_cerradas.txt` | Procesamiento de los JSON y preguntas cerradas |
+| `PROCESAMIENTO_DE_MENSAJES` | `logs_procesar_mensajes.txt` | Detección de preguntas y respuestas, mensaje por mensaje |
+| `PROCESAMIENTO_TIEMPO_REAL` | `log_procesamiento_tiempo_real.txt` | Procesamiento de mensajes nuevos del bot |
+| `LOGGER_EMBEDDINGS` | `logs_generacion_embeddings.txt` | Base vectorial |
+| `LOGGER_EXTRAER_PREGUNTAS` | `logs_preguntas_para_embeddings.txt` | Preguntas y metadatos usados para los embeddings |
+| `RAG_OLLAMA` | `log_rag_ollama.txt` | Generación y verificación de respuestas |
+| `MIGRACIONES_ALEMBIC` | `log_migraciones_alembic_automaticas.txt` | Migraciones de la base de datos |
+| `LOGGER_CARGADOR_YAML` | `cargador_yaml.txt` | Carga de la configuración YAML |
+| `CHATBOT_CON_DISCORD` | `log_chatbot_integracion_discord.txt` | Funcionamiento del bot |
+| `DISCORD` | `log_discord_*` | Librería discord.py |
+
+Ejemplo:
+
+```
+LOG_LEVEL=INFO
+LOG_LEVEL_CARGA_DB=DEBUG
+```
+
+Todos los archivos quedan en `INFO`, salvo `log_persistencia_de_datos.txt`, que también incluye `DEBUG`.
+
+Aclaraciones:
+
+- El nivel es un **umbral**: con `INFO` se escribe `INFO`, `WARNING`, `ERROR` y `CRITICAL`. No se puede activar solo `INFO`.
+- Para investigar un problema, usar `DEBUG`. Para registrar casi nada, usar `CRITICAL`.
+- Los nombres van en **mayúsculas y exactos**. Si uno está mal escrito, no se aplica y ese logger usa `LOG_LEVEL`.
+
 ## Estructura
 
 ```
