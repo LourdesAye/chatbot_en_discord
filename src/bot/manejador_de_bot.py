@@ -28,7 +28,7 @@ from utils.filtros_de_mensajes import (
     FiltroSoloNumerosSignos,
     FiltroSoloSimbolos,
 )
-from utils.utilidades_logs import setup_logger
+from utils.utilidades_logs import nivel_de_logger, setup_logger
 from validador import Validador
 
 QUERY_RESPUESTAS_A_PREGUNTA = """
@@ -233,12 +233,12 @@ class DiscordChatbot:
 
         if not self.gestor_vectorial.vectordb:
             await destino.send("Todavía no tengo preguntas cargadas para buscar 😕. Intentalo más tarde")
-            self.logger_chatbot_discord.debug("❌ No existe base vectorial cargada; se informa al usuario.")
+            self.logger_chatbot_discord.warning("❌ No existe base vectorial cargada; se informa al usuario.")
             return
 
         resultados = await asyncio.to_thread(self.gestor_vectorial.buscar, mensaje_texto, 3)
         # Deja registradas las similitudes para poder calibrar RAG_UMBRAL_SIMILITUD
-        self.logger_chatbot_discord.debug(
+        self.logger_chatbot_discord.info(
             f"🔎 Similitudes (umbral {self.umbral_similitud}): "
             + " | ".join(f"{sim:.3f} → {recortar(doc.page_content, 60)}" for doc, sim in (resultados or []))
         )
@@ -247,7 +247,7 @@ class DiscordChatbot:
 
         if not conversaciones:
             await destino.send(f"No encontré algo parecido en las consultas anteriores. Podés preguntar en {self._texto_canal_consultas()} 🙂")
-            self.logger_chatbot_discord.debug("❌ No se encontraron preguntas parecidas; se informa al usuario.")
+            self.logger_chatbot_discord.info("❌ No se encontraron preguntas parecidas; se informa al usuario.")
             return
 
         mensaje_para_discord = None
@@ -318,7 +318,7 @@ class DiscordChatbot:
     def setup_events(self):
         @self.bot.event
         async def on_ready():
-            self.logger_chatbot_discord.debug(f"✅ Bot conectado como {self.bot.user}")
+            self.logger_chatbot_discord.info(f"✅ Bot conectado como {self.bot.user}")
             for guild in self.bot.guilds:
                 canal = None
                 if self.id_canal_chatbot:
@@ -329,7 +329,7 @@ class DiscordChatbot:
                     await canal.send(f"🤖 ¡Bot conectado como {self.bot.user}!")
                     self.logger_chatbot_discord.debug(f"✅ Mensaje de autenticación exitosa enviado al canal #{canal.name} en {guild.name}")
                 else:
-                    self.logger_chatbot_discord.debug(f"❌ Canal no encontrado en el servidor: {guild.name}")
+                    self.logger_chatbot_discord.warning(f"❌ : {guild.name}")
 
         @self.bot.event
         async def on_message(message):
@@ -393,4 +393,5 @@ class DiscordChatbot:
             )
 
     def run(self):
-        self.bot.run(self.token, log_handler=self.discord_handler, log_level=logging.DEBUG)
+        self.bot.run(self.token, log_handler=self.discord_handler, log_level=nivel_de_logger("discord"))
+

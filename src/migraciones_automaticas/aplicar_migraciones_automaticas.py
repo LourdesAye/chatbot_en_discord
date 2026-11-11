@@ -17,7 +17,7 @@ def aplicar_migraciones_automaticas():
     try:
         alembic_cfg = Config(str(ALEMBIC_INI))
         command.upgrade(alembic_cfg, "head")
-        logger_migraciones_alembic.debug(" ✅ Migraciones aplicadas con éxito.")
+        logger_migraciones_alembic.info(" ✅ Migraciones aplicadas con éxito.")
 
     except CommandError as e:
         logger_migraciones_alembic.error(f" ❌ Error estructural de Alembic: {e}")

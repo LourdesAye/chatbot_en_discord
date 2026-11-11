@@ -1,5 +1,3 @@
-import traceback
-
 from dateutil.parser import isoparse
 from psycopg2 import InterfaceError, OperationalError
 from psycopg2.extras import RealDictCursor
@@ -145,8 +143,8 @@ class GestorBD:
         return isoparse(timestamp_str)
 
     def persistir_preguntas(self, preguntas_cerradas: list[Pregunta], index):
-        logger_db.debug("🗄️ Persistencia de datos")
-        logger_db.debug(f"📁 se va a procesar en JSON {index} ... ")
+        logger_db.info("🗄️ Persistencia de datos")
+        logger_db.info(f"📁 se va a procesar en JSON {index} ... ")
         cont_preg_sin_resp = 0
         nombre_ruta = f"log_preg_sin_respuestas_{index}"
         preguntas_a_persistir = []
@@ -215,7 +213,6 @@ class GestorBD:
                 )
 
                 for orden, respuesta in enumerate(respuestas_ordenadas, start=1):
-                    logger_db.debug("")
                     logger_db.debug(f"📩 respuesta {orden} : {respuesta.contenido}")
                     
                     autor_id_r = self.insertar_o_obtener_autor(respuesta.autor)
@@ -250,8 +247,7 @@ class GestorBD:
             logger_db.info( f"✅ Transacción confirmada exitosamente para el JSON {index}.")
 
         except Exception as e:
-            logger_db.error(f"❌ Error al persistir las preguntas y respuestas: {e}")
-            logger_db.error(traceback.format_exc())
+            logger_db.exception(f"❌ Error al persistir las preguntas y respuestas: {e}")
             if self.conexion_bdd:
                 self.conexion_bdd.rollback()
                 logger_db.warning("⛔ Transacción revertida debido al error.")
