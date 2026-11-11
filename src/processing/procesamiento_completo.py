@@ -97,16 +97,16 @@ class ProcesadorBatch(ProcesadorBase):
         logger_msj.debug(f"🟢 PREGUNTA CERRADA por {motivo}")
 
     def procesar_dataframe(self, mensajes_limpios_df : pd.DataFrame, ruta_json : str):
-        logger_msj.debug(" 🔵 Iniciando procesamiento del DataFrame...")
+        logger_msj.info(" 🔵 Iniciando procesamiento del DataFrame...")
         for _, fila_df in mensajes_limpios_df.iterrows(): # obtener índice específico que no siempre es número y fila completa del Dataframe
             mensaje = Mensaje.convertir_fila_a_mensaje(fila_df, ruta_json,self.validador)
             self.contador_mensajes += 1
             logger_msj.debug(f" ... PROCESANDO MENSAJE {self.contador_mensajes}: '{mensaje.contenido}' ")
             self.procesar_mensaje(mensaje)
-        logger_msj.debug("✅ PROCESAMIENTO FINALIZADO.")
+        logger_msj.info("✅ PROCESAMIENTO FINALIZADO.")
         for numero_pregunta,pregunta in enumerate(self.preguntas_cerradas,start=1):
             guardar_pregunta_y_respuestas_en_log(pregunta, numero_pregunta,self.nombre_log)
-        logger_msj.debug(f"Total mensajes: {self.contador_mensajes}, Preguntas nuevas: {self.contador_preguntas_nuevas}, Cerradas: {self.contador_preguntas_cerradas}")
+        logger_msj.info(f"Total mensajes: {self.contador_mensajes}, Preguntas nuevas: {self.contador_preguntas_nuevas}, Cerradas: {self.contador_preguntas_cerradas}")
 
     def registrar_mensaje_suelto(self, mensaje: Mensaje):
         self.mensajes_sueltos.append(mensaje)

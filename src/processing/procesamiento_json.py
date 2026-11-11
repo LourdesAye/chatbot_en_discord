@@ -25,7 +25,7 @@ def cargar_json_como_dataframe(ruta_json : Ruta) -> pd.DataFrame :
 def aplicar_filtros_mensajes_json(
     mensajes_crudos_df: pd.DataFrame, filtros_mensajes: list[EstrategiaFiltro]
 ) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
-    logger_proc.debug(f"\n✉️ Cantidad de mensajes en el json: {len(mensajes_crudos_df)}")
+    logger_proc.info(f"\n✉️ Cantidad de mensajes en el json: {len(mensajes_crudos_df)}")
     # Limpiar espacios en blanco al inicio y al final de los contenidos de los mensajes
     mensajes_crudos_df["content"] = mensajes_crudos_df["content"].astype(str).str.strip()
     mensajes_limpios_df = mensajes_crudos_df.copy()
@@ -39,24 +39,23 @@ def aplicar_filtros_mensajes_json(
         logger_proc.debug(f"🟡 Cantidad de mensajes filtrados por {nombre_filtro}: {len(mensajes_descartados[nombre_filtro])}")
         # Los que NO cumplen la condición de descarte (el negado ~mask)
         mensajes_limpios_df = mensajes_limpios_df[~mask_descartados]
-    logger_proc.debug(f"🟢 Cantidad de mensajes luego de aplicar todos los filtros: {len(mensajes_limpios_df)}")
+    logger_proc.info(f"🟢 Cantidad de mensajes luego de aplicar todos los filtros: {len(mensajes_limpios_df)}")
     return mensajes_limpios_df, mensajes_descartados
 
 def _registrar_estadisticas_finales(logger, procesador, numero_json):
     """Función auxiliar encargada exclusivamente de volverse responsable 
     del reporte de métricas y estadísticas finales del procesamiento."""
-    logger.debug("")
-    logger.debug(f"\n✅ Procesamiento completado para el archivo JSON {numero_json}")
-    logger.debug("📊 Resultados de procesamiento:")
-    logger.debug("\n📊 Análisis de las listas de preguntas una vez finalizado el procesamiento:")
-    logger.debug(f"     📊 {len(procesador.preguntas_abiertas)} preguntas abiertas")
-    logger.debug(f"     📊 {len(procesador.preguntas_cerradas)} preguntas cerradas")
-    logger.debug("\n📊 Análisis de los mensajes procesados:")
-    logger.debug(f"     📊 {len(procesador.mensajes_sueltos)} mensajes sueltos")
-    logger.debug(f"     📊 {procesador.cant_concatenaciones} mensajes concatenados")
-    logger.debug(f"     📊 {procesador.cant_mens_cierre_alumnos} mensajes de cierre de alumnos")
-    logger.debug(f"     📊 {procesador.contador_preguntas_nuevas} preguntas generadas")
-    logger.debug(f"     📊 {procesador.contador_mensaje_respuesta} mensajes detectados como respuesta")
+    logger.info(f"\n✅ Procesamiento completado para el archivo JSON {numero_json}")
+    logger.info("📊 Resultados de procesamiento:")
+    logger.info("\n📊 Análisis de las listas de preguntas una vez finalizado el procesamiento:")
+    logger.info(f"     📊 {len(procesador.preguntas_abiertas)} preguntas abiertas")
+    logger.info(f"     📊 {len(procesador.preguntas_cerradas)} preguntas cerradas")
+    logger.info("\n📊 Análisis de los mensajes procesados:")
+    logger.info(f"     📊 {len(procesador.mensajes_sueltos)} mensajes sueltos")
+    logger.info(f"     📊 {procesador.cant_concatenaciones} mensajes concatenados")
+    logger.info(f"     📊 {procesador.cant_mens_cierre_alumnos} mensajes de cierre de alumnos")
+    logger.info(f"     📊 {procesador.contador_preguntas_nuevas} preguntas generadas")
+    logger.info(f"     📊 {procesador.contador_mensaje_respuesta} mensajes detectados como respuesta")
     
     total_analizados = (
         len(procesador.mensajes_sueltos) + 
@@ -65,22 +64,20 @@ def _registrar_estadisticas_finales(logger, procesador, numero_json):
         procesador.contador_preguntas_nuevas + 
         procesador.contador_mensaje_respuesta
     )
-    logger.debug(f"     ✅ {total_analizados} total de mensajes analizados")
-    logger.debug(f"     📊 {procesador.cant_mens_cierre_docente} mensajes detectados como respuesta que también son de cierre de docentes")
-    logger.debug(f"     📊 {procesador.cant_mens_cierre_alumnos + procesador.cant_mens_cierre_docente} mensajes totales de cierre")
+    logger.info(f"     ✅ {total_analizados} total de mensajes analizados")
+    logger.info(f"     📊 {procesador.cant_mens_cierre_docente} mensajes detectados como respuesta que también son de cierre de docentes")
+    logger.info(f"     📊 {procesador.cant_mens_cierre_alumnos + procesador.cant_mens_cierre_docente} mensajes totales de cierre")
 
     if len(procesador.mensajes_sueltos) >= 1:
         for indice, mensaje_suelto in enumerate(procesador.mensajes_sueltos, start=1):
             logger.debug("\n✉️ Listado de mensajes sueltos: ")
             logger.debug(f"✉️ El mensaje suelto {indice}: '{mensaje_suelto.contenido}'")
-    logger.debug("")
 
 def procesar_archivos_json(rutas_json: list[Ruta], validador: Validador) -> list[ProcesadorBatch]:
     procesadores = []
 
     for numero_json, ruta_json in enumerate(rutas_json, start=1):
-        logger_proc.debug("")
-        logger_proc.debug(f"📄 Procesando JSON {numero_json}")
+        logger_proc.info(f"📄 Procesando JSON {numero_json}")
         logger_proc.debug(f"📂 Ruta: {ruta_json}")
 
         mensajes_crudos_df = cargar_json_como_dataframe(ruta_json)

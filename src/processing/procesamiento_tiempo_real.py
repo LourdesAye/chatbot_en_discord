@@ -76,7 +76,7 @@ class ProcesadorTiempoReal(ProcesadorBatch):
             if tiempo_transcurrido(convertir_a_datetime(pregunta.timestamp), ahora) > limite:
                 self._preguntas_abiertas.remove(pregunta)
                 self.contador_preguntas_descartadas += 1
-                logger_tr.debug(f"🗑️ Pregunta descartada por falta de respuesta docente: {pregunta.contenido}")
+                logger_tr.info(f"🗑️ Pregunta descartada por falta de respuesta docente: {pregunta.contenido}")
 
     def registrar_cierre(self, pregunta: Pregunta, motivo: str):
         super().registrar_cierre(pregunta, motivo)  # la mueve de abiertas a cerradas
@@ -95,7 +95,7 @@ class ProcesadorTiempoReal(ProcesadorBatch):
     def _indexar_si_corresponde(self, pregunta: Pregunta):
         # Mismo criterio que embeddings.extraer_preguntas: respuesta validada, con contexto y no administrativa
         if pregunta.sin_contexto or pregunta.es_administrativa or not pregunta.tiene_respuesta_validada():
-            logger_tr.debug(f"⏭️ La pregunta no se indexa (sin contexto/administrativa/sin validar): {pregunta.contenido}")
+            logger_tr.info(f"⏭️ La pregunta no se indexa (sin contexto/administrativa/sin validar): {pregunta.contenido}")
             return
         try:
             self.gestor_vectorial.agregar_pregunta(pregunta.id_pregunta_bd, pregunta.contenido)

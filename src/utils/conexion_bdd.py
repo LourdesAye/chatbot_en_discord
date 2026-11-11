@@ -21,4 +21,4 @@ if not all(CONFIG.values()):
     logger_db.error("❌ Faltan variables de entorno para la conexión a la base de datos. Verificá el archivo .env.")
     raise ValueError("Faltan datos de conexión a la base de datos. Verificá el archivo .env")
 else:
-    logger_db.info("✅ Variables de entorno cargadas correctamente para la conexión a la base de datos.")
+    logger_db.debug("✅ Variables de entorno cargadas correctamente para la conexión a la base de datos.")

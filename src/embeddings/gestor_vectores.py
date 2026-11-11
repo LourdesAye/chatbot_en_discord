@@ -69,7 +69,7 @@ class GestorBaseVectorial:
         # Verificar si hay datos para crear la base vectorial
         nuevas_preguntas, nuevos_metadatos = obtener_preguntas_y_metadatos()
         if not nuevas_preguntas:
-            self.logger_embeddings.error("❌ No hay datos para crear la base vectorial")
+            self.logger_embeddings.warning("❌ No hay datos para crear la base vectorial")
             return None
 
         # Eliminar base existente si se fuerza actualización
@@ -129,7 +129,7 @@ class GestorBaseVectorial:
                     """, (id_pregunta,))
                     resultados = cursor.fetchall()
                     if resultados:
-                        self.logger_embeddings.info(f"📊 Total de respuestas obtenidas: {len(resultados)}")
+                        self.logger_embeddings.debug(f"📊 Total de respuestas obtenidas: {len(resultados)}")
                         return resultados
                     else:
                         self.logger_embeddings.warning(f"⚠️ No se encontró respuesta para id_pregunta: {id_pregunta}")
@@ -151,7 +151,7 @@ class GestorBaseVectorial:
             resultados = self.vectordb.similarity_search_with_score(query=pregunta, k=k)
             
             if not resultados:
-                self.logger_embeddings.error(f"❌ No hay resultados de preguntas parecidas a la pregunta: \n ❓'{pregunta}' ❓")
+                self.logger_embeddings.info(f"❌ No hay resultados de preguntas parecidas a la pregunta: \n ❓'{pregunta}' ❓")
                 return None
 
             resultados_con_similitud = [(doc, 1 - score) for doc, score in resultados]
@@ -182,7 +182,7 @@ class GestorBaseVectorial:
                         self.logger_embeddings.debug(f"Nombre del Autor: {respuesta['nombre_autor']}")
                         self.logger_embeddings.debug(f"Condición del Autor: {respuesta['condicion_docente']}")
                 else:
-                    self.logger_embeddings.debug("⚠️ No hay respuestas registradas para esta pregunta.")
+                    self.logger_embeddings.warning("⚠️ No hay respuestas registradas para esta pregunta.")
                     
                 self.logger_embeddings.debug(f"\n{'-'*80}")
 
@@ -197,7 +197,7 @@ class GestorBaseVectorial:
         import shutil
         if os.path.exists(self.persist_directory):
             shutil.rmtree(self.persist_directory)
-            self.logger_embeddings.debug("🗑️ Base vectorial eliminada.")
+            self.logger_embeddings.info("🗑️ Base vectorial eliminada.")
         else:
             self.logger_embeddings.debug("⚠️ No existe la base vectorial a eliminar.")
     

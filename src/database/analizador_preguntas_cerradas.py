@@ -30,8 +30,8 @@ class AnalizadorPreguntasCerradas:
         return preguntas_a_marcar
     
     def aplicar_analisis_preguntas(self, num_procesador):
-            logger_proc.debug(f"\n🔢 Analizando el json número : {num_procesador} ... ")
-            logger_proc.debug(f"\n✅ Preguntas cerradas: {len(self.preguntas)}\n")
+            logger_proc.info(f"\n🔢 Analizando el json número : {num_procesador} ... ")
+            logger_proc.info(f"\n✅ Preguntas cerradas: {len(self.preguntas)}\n")
 
             # Aplicamos los filtros secuencialmente
             self.marcar_preguntas_sin_contexto()
@@ -42,7 +42,7 @@ class AnalizadorPreguntasCerradas:
             self.cant_preg_sin_contexto = sum(1 for p in self.preguntas if p.sin_contexto)
             self.cant_respuestas = sum(len(p.respuestas) for p in self.preguntas)
 
-            logger_proc.debug(f"\n✅ Preguntas sin contexto: {self.cant_preg_sin_contexto}\n")
-            logger_proc.debug(f"\n✅ Cantidad de Respuestas: {self.cant_respuestas}")
+            logger_proc.info(f"\n✅ Preguntas sin contexto: {self.cant_preg_sin_contexto}\n")
+            logger_proc.info(f"\n✅ Cantidad de Respuestas: {self.cant_respuestas}")
 
             return len(self.preguntas), self.cant_respuestas, self.preguntas

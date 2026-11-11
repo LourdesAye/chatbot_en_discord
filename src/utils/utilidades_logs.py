@@ -1,5 +1,7 @@
 import logging
 
+import os
+
 from datetime import datetime
 
 import pandas as pd
@@ -21,6 +23,30 @@ def preparar_ruta(base_dir: Path, nombre_archivo: str) -> Path:
     base_dir.mkdir(parents=True, exist_ok=True)
     return base_dir / nombre_archivo
 
+NIVEL_POR_DEFECTO = "INFO"
+
+def nivel_de_logger(nombre_logger: str) -> int:
+    """Nivel de un logger según el .env.
+
+    Prioridad: LOG_LEVEL_<NOMBRE_EN_MAYUSCULAS> > LOG_LEVEL > INFO.
+    Ejemplo: LOG_LEVEL_CARGA_DB=DEBUG
+    """
+    valor = (
+        os.getenv(f"LOG_LEVEL_{nombre_logger.upper()}")
+        or os.getenv("LOG_LEVEL")
+        or NIVEL_POR_DEFECTO
+    )
+
+    # El módulo logging almacena los niveles como enteros (ej. DEBUG=10, INFO=20).
+    # getattr busca dinámicamente la constante; si no existe (ej. error de tipeo), 
+    # devuelve None en lugar de romper la ejecución.
+    nivel = getattr(logging, valor.strip().upper(), None)
+
+    # Validación defensiva: si el valor recuperado no es un entero válido,
+    # se aplica un respaldo seguro a INFO.
+    return nivel if isinstance(nivel, int) else logging.INFO
+
+
 def setup_logger(nombre_logger, nombre_archivo):
     logger = logging.getLogger(nombre_logger)
     ruta_log = (Path(LOG_DIR_FINAL) / nombre_archivo).resolve()
@@ -36,7 +62,7 @@ def setup_logger(nombre_logger, nombre_archivo):
         return logger
 
     preparar_ruta(LOG_DIR_FINAL, nombre_archivo)   # crea la carpeta si falta
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(nivel_de_logger(nombre_logger))
     file_handler = logging.FileHandler(ruta_log, mode='a', encoding='utf-8')
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(levelname)s - %(name)s - %(message)s'))

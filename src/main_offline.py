@@ -31,9 +31,9 @@ def main():
     buscador_archivos = BuscadorArchivos()
     rutas_json = buscador_archivos.obtener_rutas_json() 
 
-    logger_proc.debug(f" 🗂️ Cantidad de archivos JSON encontrados: {len(rutas_json)}")
+    logger_proc.info(f" 🗂️ Cantidad de archivos JSON encontrados: {len(rutas_json)}")
     if len(rutas_json) == 0:
-        logger_proc.debug(" ❌ No se encontraron archivos JSON para procesar. Finalizando ejecución.")
+        logger_proc.error(" ❌ No se encontraron archivos JSON para procesar. Finalizando ejecución.")
         sys.exit(1)  # Salir del programa si no hay archivos JSON   
 
     # PROCESAMIENTO DE ARCHIVOS JSON
@@ -41,8 +41,8 @@ def main():
     for num_ruta,ruta in enumerate(rutas_json,start=1):
         logger_proc.debug(f" 📌 Ruta {num_ruta} detectada: {ruta}")
     procesadores = procesar_archivos_json(rutas_json,validador) # función para procesar todos los archivos JSON   
-    logger_proc.debug(f" 🔍 Cantidad de procesadores generados: {len(procesadores)}")
-    logger_proc.debug(" 🗃️ Conectándose a la base de datos...") 
+    logger_proc.info(f" 🔍 Cantidad de procesadores generados: {len(procesadores)}")
+    logger_proc.info(" 🗃️ Conectándose a la base de datos...") 
 
     # PERSISTENCIA EN BASE DE DATOS
     # Validar si existe BDD o crearla
@@ -58,7 +58,7 @@ def main():
 
     bd = GestorBD(CONFIG,validador) 
     if bd.tiene_preguntas():
-        logger_proc.debug( "⚠️ La base de datos ya contiene preguntas. Se cancela la carga para evitar duplicados.")
+        logger_proc.warning( "⚠️ La base de datos ya contiene preguntas. Se cancela la carga para evitar duplicados.")
         bd.cerrar_conexion()
     else:
         cant_total_resp = 0 
@@ -75,12 +75,10 @@ def main():
             bd.persistir_preguntas(preguntas_a_procesar,indice)
 
         # Resumen final de la carga de datos
-        logger_proc.debug(" ")
-        logger_proc.debug(f" ✅ La cantidad total de preguntas generadas : {cant_total_preg}")
-        logger_proc.debug(f" ✅ La cantidad total de respuestas generadas : {cant_total_resp}")
+        logger_proc.info(f" ✅ La cantidad total de preguntas generadas : {cant_total_preg}")
+        logger_proc.info(f" ✅ La cantidad total de respuestas generadas : {cant_total_resp}")
         bd.cerrar_conexion() # cerrar conexión con bdd
-        logger_proc.debug(" ")
-        logger_proc.debug(" 💾 Conexión cerrada y datos guardados.")
+        logger_proc.info(" 💾 Conexión cerrada y datos guardados.")
 
     # GESTIÓN DE LA BASE VECTORIAL DE EMBEDDINGS
     modelo = crear_modelo_embeddings()
