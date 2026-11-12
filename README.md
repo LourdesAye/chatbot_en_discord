@@ -196,6 +196,7 @@ Aclaraciones:
 - El nivel es un **umbral**: con `INFO` se escribe `INFO`, `WARNING`, `ERROR` y `CRITICAL`. No se puede activar solo `INFO`.
 - Para investigar un problema, usar `DEBUG`. Para registrar casi nada, usar `CRITICAL`.
 - Los nombres van en **mayúsculas y exactos**. Si uno está mal escrito, no se aplica y ese logger usa `LOG_LEVEL`.
+- Una variable ya definida en la terminal **tiene prioridad sobre el `.env`**. Si se cambia un valor y no se aplica, revisar la sesión (PowerShell: `Get-ChildItem Env:LOG*`; Git Bash: `env | grep LOG`) y borrar la variable (PowerShell: `Remove-Item Env:LOG_LEVEL`; Git Bash: `unset LOG_LEVEL`), o abrir una terminal nueva.
 
 ## Estructura
 
