@@ -1,6 +1,5 @@
 # entorno
-.env
-.env.*
+.env*
 venv/
 
 # Datos reales / generados
