@@ -162,7 +162,7 @@ Get-ChildItem $carpeta.FullName -Filter *.txt | ForEach-Object {
   1. **Carpeta `chroma/`** (en VS Code): en el Explorador (lista de archivos del costado izquierdo), buscar en la raíz del proyecto la carpeta `chroma` (el nombre que indica `CHROMA_DIR`), clic derecho → *Eliminar* y confirmar. Si no existe (primera ejecución), no hay nada que borrar.
   2. **Base de datos** (en pgAdmin 4): en el panel izquierdo, *Servers* → *PostgreSQL 18* → *Databases* → `base_de_conocimiento_chatbot_demo` (el valor de `DB_NAME` en el `.env`; verificar el nombre antes de borrar, para no eliminar otra base) → clic derecho → *Delete* (*Drop*) → confirmar con *Yes*. Si pgAdmin avisa que la base tiene conexiones abiertas, cerrar la terminal o el programa que la usa y repetir. No hay que volver a crearla a mano: el programa la crea al arrancar: `main_offline.py` llama a `crear_base_de_datos_si_no_existe` (`src/database/crear_bdd_e_inicializarla.py`), que consulta si existe y, si no, llama a `crear_base_de_datos` (`CREATE DATABASE`).
   3. **Comprobar que partió de cero:** en la ejecución, Alembic debe mostrar `Running upgrade -> <revisión>, crear_tablas_iniciales` (esta línea se usa como evidencia en los casos de logs). Si la base se había borrado, `log_persistencia_de_datos.txt` también debe tener la línea `Creando base de datos base_de_conocimiento_chatbot_demo...` (es de nivel `INFO`, por lo que no aparece con `LOG_LEVEL=WARNING`).
-  4. **Git:** el `.gitignore` incluye las reglas `.env`, `.env.*` y `chroma/` (también `logs/`, `venv/` y `chroma_demo/`), por lo que ni el `.env` ni la base vectorial llegan a un commit. Las variantes que no empiezan con `.env.` (por ejemplo `.envi`) no están cubiertas (ver OBS-02). Se comprueba con `git check-ignore -v .env chroma` (una línea por cada ruta; sin salida para una ruta = no está ignorada).
+  4. **Git:** el `.gitignore` incluye las reglas `.env`, `.env.*` y `chroma/` (también `logs/`, `venv/` y `chroma_demo/`), por lo que ni el `.env` ni la base vectorial llegan a un commit. Las variantes que no empiezan con `.env.` (por ejemplo `.envi`) no están cubiertas (ver OBS-02; en el commit `269318d`, posterior al probado, las dos reglas se reemplazaron por `.env*`). Se comprueba con `git check-ignore -v .env chroma` (una línea por cada ruta; sin salida para una ruta = no está ignorada).
 
      Comprobado el 20/11/2026 (18:05, rama `development`):
 
@@ -1112,13 +1112,13 @@ Todos los casos de la ronda están ejecutados (secciones 6 a 9). Quedan estos do
 
 **Nota sobre los casos ya ejecutados.** TC-RUT-02 se ejecutó antes de incorporar a sus precondiciones los procedimientos A (completo) y E; TC-LOG-01, TC-LOG-02, TC-LOG-03, TC-LOG-04 y TC-INT-01 se repitieron el 20/11/2026 con ambos aplicados, TC-LOG-06 se ejecutó ese día con ambos aplicados, TC-RUT-03 con el procedimiento A, TC-LOG-05 (21/11/2026) con A (repetido una vez) sin E, TC-LOG-07 y TC-LOG-08 (21/11/2026) con A sin E, y TC-CFG-01 y TC-INT-02 (21/11/2026) con A y E (TC-INT-02, además, con C). Sus resultados coincidieron con lo esperado, lo que indica que ninguna variable de sesión ni la falta de conexión alteró esos casos. La única diferencia entre la sesión y el `.env` que se detectó fue `LOG_LEVEL` (OBS-01), que se resolvió en su momento.
 
-**Estado de la ronda.** Los 17 casos de la ronda se ejecutaron y pasaron; no hubo casos fallidos. Los hallazgos quedaron documentados y ninguno requiere repetir casos. OBS-03 (sin internet) se ejecutó y se completó: sin conexión el programa falla tras unos 3 minutos de reintentos; los avisos de `huggingface_hub` no llegan a los archivos de log; y con `HF_HUB_OFFLINE=1` el programa termina bien. Las acciones sugeridas en OBS-02, OBS-03 y OBS-04 son cambios aparte (tabla de abajo), que se harán después de entregar este informe para no modificar la versión probada (`05a96b0`). Los dos casos opcionales de la sección 10 quedan fuera de la ronda.
+**Estado de la ronda.** Los 17 casos de la ronda se ejecutaron y pasaron; no hubo casos fallidos. Los hallazgos quedaron documentados y ninguno requiere repetir casos. OBS-03 (sin internet) se ejecutó y se completó: sin conexión el programa falla tras unos 3 minutos de reintentos; los avisos de `huggingface_hub` no llegan a los archivos de log; y con `HF_HUB_OFFLINE=1` el programa termina bien. Las acciones sugeridas en OBS-02, OBS-03 y OBS-04 son cambios aparte (tabla de abajo), que se hacen después de entregar este informe para no modificar la versión probada (`05a96b0`); la de OBS-02 ya se resolvió (commit `269318d`). Los dos casos opcionales de la sección 10 quedan fuera de la ronda.
 
 **Acciones pendientes, fuera de esta ronda** (ninguna cambia el resultado de los 17 casos):
 
 | Origen | Acción | Después de hacerla |
 |---|---|---|
-| OBS-02 | En `.gitignore`, reemplazar `.env` y `.env.*` por `.env*` | `git check-ignore -v .envi` debe mostrar la regla |
+| OBS-02 | En `.gitignore`, reemplazar `.env` y `.env.*` por `.env*` | `git check-ignore -v .envi` debe mostrar la regla. ✅ Resuelta en commit `269318d` (22/11/2026) |
 | OBS-04 | En `main_offline.py`, reemplazar `sys.exit(1)` por `sys.exit("mensaje")` (sin emojis), o agregar un handler de consola para `ERROR` | Repetir TC-INT-02 en el commit nuevo: el mensaje debe verse en la consola y el código de salida seguir en `1` |
 | OBS-03 | Documentar `HF_HUB_OFFLINE=1` en el README | — |
 | OBS-03 | Evaluar que el programa avise o falle rápido sin conexión, en lugar de reintentar unos 3 minutos | Repetir la ejecución sin conexión |
@@ -1141,6 +1141,20 @@ Al renombrar `.env` a `.envi` en TC-RUT-02, VS Code lo muestra con la letra `U` 
 - **Análisis:** el `.gitignore` del commit probado contiene `.env` y `.env.*`. El patrón `.env.*` exige un punto después de `env`, por lo que cubre `.env.bak` pero no `.envi`. Coincide con la letra `U` de la captura.
 - **Clasificación:** probable defecto menor de configuración (no del código). Para confirmarlo en tu equipo: `git check-ignore -v .envi` (sin salida = no está ignorado).
 - **Acción:** no hacer commits mientras el archivo esté renombrado. Propuesta, en un cambio aparte y fuera de esta ronda: reemplazar las reglas `.env` y `.env.*` por una sola, `.env*`, que cubre ambas y también `.envi`. No afecta a `env.example`, porque ese nombre no empieza con punto (si algún día existiera un `.env.example` con punto, habría que agregar `!.env.example`). Se verifica con `git check-ignore -v .envi`.
+- **Resolución:** resuelta en commit `269318d` (22/11/2026, rama `development`): en `.gitignore` se reemplazaron las reglas `.env` y `.env.*` por `.env*` (1 línea agregada, 2 eliminadas). Verificación hecha con el cambio ya guardado, antes del commit: `.envi` y `.env` quedan ignorados por la regla de la línea 2. No se repitió el renombrado del `.env` de TC-RUT-02.
+  ```
+  PS> git check-ignore -v .envi
+  .gitignore:2:.env*      .envi
+  PS> git check-ignore -v .env
+  .gitignore:2:.env*      .env
+  PS> git diff
+  -.env
+  -.env.*
+  +.env*
+  PS> git commit -m "fix: ignorar todas las variantes de .env en .gitignore"
+  [development 269318d] fix: ignorar todas las variantes de .env en .gitignore
+   1 file changed, 1 insertion(+), 2 deletions(-)
+  ```
 
 **OBS-03: sin internet, `main_offline.py` reintenta unos 3 minutos y termina con error al cargar el modelo de embeddings, aunque el modelo esté en la caché.**
 En una primera ejecución sin conexión (descartada: se interrumpió con Ctrl+C) se vio que, después de las migraciones, el programa intentaba consultar `huggingface.co` y reintentaba. Se repitió la ejecución completa, sin interrumpir, para saber cómo termina.
